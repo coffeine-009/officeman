@@ -39,13 +39,13 @@ class RedmineSystem(TrackingSystem):
     """
     apiAccessKey = None
 
-    def __init__(self, api_access_token):
+    def __init__(self, url, api_access_token):
         """
         Create a tracking system for redmine.
 
         :param api_access_token: API access token
         """
-        TrackingSystem.__init__(self, Redmine('https://redmine.softjourn.if.ua', key=api_access_token))
+        TrackingSystem.__init__(self, Redmine(url, key=api_access_token))
 
     def check(self, project_id):
         """
@@ -70,17 +70,16 @@ class RedmineSystem(TrackingSystem):
 
         return 1
 
-    def log_time(self, project_id, sub_project_id, hours):
+    def log_time(self, project_id, hours):
         """
         Log time.
 
         :param project_id:      Id of issue or project for logging time
-        :param sub_project_id:  Id of sub-project.
         :param hours:           Count of hours for logging.
         """
         today = datetime.now().strftime("%Y-%m-%d")
-        # self.client.time_entry.create(issue_id=project_id, project_sow_id=sub_project_id, spent_on=today, hours=hours, activity_id=2)
-        self.log.info('Logged %s hour(s) for %s/%s at %s', hours, project_id, sub_project_id, today)
+        self.client.time_entry.create(issue_id=project_id, spent_on=today, hours=hours, activity_id=2)
+        self.log.info('Logged %s hour(s) for %s at %s', hours, project_id, today)
 
 
 class Application:
@@ -89,12 +88,12 @@ class Application:
     """
     system = None
 
+    url = None
     system_name = None
     api_key = None
     # Log params
     vacation_project_id = None
     project_id = None
-    sub_project_id = None
     hours = None
 
     def __init__(self, params):
@@ -105,6 +104,9 @@ class Application:
         """
         for param in params:
             key, value = param.split('=')
+
+            if key == '--url':
+                self.url = value
 
             if key == '--system':
                 self.system_name = value
@@ -118,21 +120,18 @@ class Application:
             if key == '--project-id':
                 self.project_id = value
 
-            if key == '--sub-project-id':
-                self.sub_project_id = value
-
             if key == '--hours':
                 self.hours = value
 
         if self.system_name == 'redmine':
-            self.system = RedmineSystem(self.api_key)
+            self.system = RedmineSystem(self.url, self.api_key)
 
     def run(self):
         """
         Run application.
         """
         if self.system.check(self.vacation_project_id):
-            self.system.log_time(self.project_id, self.sub_project_id, self.hours)
+            self.system.log_time(self.project_id, self.hours)
 
 
 # Start app

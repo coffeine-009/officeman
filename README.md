@@ -15,7 +15,7 @@ with your params.
 
 ```bash
 docker build --rm -t officeman .
-docker run -d officeman
+docker run --restart=always -d officeman
 ```
 
 Also you can check logs.

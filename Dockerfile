@@ -6,6 +6,7 @@ MAINTAINER Vitaliy Tsutsman <vitaliyacm@gmail.com>
 # Install dependencies
 RUN pip install python-redmine
 RUN apt-get update && apt-get install -y cron
+RUN pip install --upgrade git+https://github.com/coffeine-009/python-redmine.git@softjourn
 
 # Share app sources
 COPY . /usr/local/officeman

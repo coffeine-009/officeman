@@ -70,15 +70,16 @@ class RedmineSystem(TrackingSystem):
 
         return 1
 
-    def log_time(self, project_id, hours):
+    def log_time(self, project_id, project_sow_id, hours):
         """
         Log time.
 
         :param project_id:      Id of issue or project for logging time
-        :param hours:           Count of hours for logging.
+        :param project_sow_id:  Id of project sow
+        :param hours:           Count of hours for logging
         """
         today = datetime.now().strftime("%Y-%m-%d")
-        self.client.time_entry.create(issue_id=project_id, spent_on=today, hours=hours, activity_id=2)
+        self.client.time_entry.create(project_id=project_id, project_sow_id=project_sow_id, spent_on=today, hours=hours, activity_id=2)
         self.log.info('Logged %s hour(s) for %s at %s', hours, project_id, today)
 
 
@@ -94,6 +95,7 @@ class Application:
     # Log params
     vacation_project_id = None
     project_id = None
+    project_sow_id = None
     hours = None
 
     def __init__(self, params):
@@ -120,6 +122,9 @@ class Application:
             if key == '--project-id':
                 self.project_id = value
 
+            if key == '--project-sow-id':
+                self.project_sow_id = value
+
             if key == '--hours':
                 self.hours = value
 
@@ -131,7 +136,7 @@ class Application:
         Run application.
         """
         if self.system.check(self.vacation_project_id):
-            self.system.log_time(self.project_id, self.hours)
+            self.system.log_time(self.project_id, self.project_sow_id, self.hours)
 
 
 # Start app

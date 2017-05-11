@@ -70,17 +70,18 @@ class RedmineSystem(TrackingSystem):
 
         return 1
 
-    def log_time(self, project_id, project_sow_id, hours):
+    def log_time(self, project_id, project_sow_id, hours, role_id):
         """
         Log time.
 
         :param project_id:      Id of issue or project for logging time
         :param project_sow_id:  Id of project sow
         :param hours:           Count of hours for logging
+        :param role_id:         Role id for logging
         """
         today = datetime.now().strftime("%Y-%m-%d")
-        self.client.time_entry.create(project_id=project_id, project_sow_id=project_sow_id, spent_on=today, hours=hours, activity_id=2)
-        self.log.info('Logged %s hour(s) for %s at %s', hours, project_id, today)
+        self.client.time_entry.create(project_id=project_id, project_sow_id=project_sow_id, spent_on=today, hours=hours, activity_id=2, role_id=role_id)
+        self.log.info('Logged %s hour(s) for %s at %s. RoleId: %s', hours, project_id, today, role_id)
 
 
 class Application:
@@ -97,6 +98,7 @@ class Application:
     project_id = None
     project_sow_id = None
     hours = None
+    role_id = None
 
     def __init__(self, params):
         """
@@ -128,6 +130,9 @@ class Application:
             if key == '--hours':
                 self.hours = value
 
+            if key == '--role_id':
+                self.role_id = value
+
         if self.system_name == 'redmine':
             self.system = RedmineSystem(self.url, self.api_key)
 
@@ -136,7 +141,7 @@ class Application:
         Run application.
         """
         if self.system.check(self.vacation_project_id):
-            self.system.log_time(self.project_id, self.project_sow_id, self.hours)
+            self.system.log_time(self.project_id, self.project_sow_id, self.hours, self.role_id)
 
 
 # Start app

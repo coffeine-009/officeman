@@ -1,1 +1,1 @@
-0 16 * * 1-5 root /usr/local/bin/python /usr/local/officeman/time-tracker.py --system=redmine --url={URL} --api-key={API_KEY} --vacation-project-id={PROJECT_ID_FOR_TRACKING_VACATION} --project-id={PROJECT_ID} --project-sow-id={SOW_ID} --hours={HOURS} >> /var/log/cron.log 2>&1
+0 15 * * 1-5 root /usr/local/bin/python /usr/local/officeman/time-tracker.py --system=redmine --url={URL} --api-key={API_KEY} --vacation-project-id={PROJECT_ID_FOR_TRACKING_VACATION} --project-id={PROJECT_ID} --project-sow-id={SOW_ID} --hours={HOURS} --role_id={ROLE_ID} >> /var/log/cron.log 2>&1
